@@ -19,7 +19,7 @@ val minSdk = 23
 
 android {
     val javaVersion = JavaVersion.VERSION_1_8
-    compileSdkVersion(33)
+    compileSdkVersion(29)
     compileOptions {
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
@@ -28,7 +28,7 @@ android {
     defaultConfig {
         applicationId = "com.github.shadowsocks.plugin.v2ray"
         minSdkVersion(minSdk)
-        targetSdkVersion(33)
+        targetSdkVersion(29)
         versionCode = 1030301
         versionName = "1.3.4"
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
