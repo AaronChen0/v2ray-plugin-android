@@ -5,7 +5,6 @@ TOOLCHAIN="$(find ${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/* -maxdepth 1 -ty
 ABIS=(arm64-v8a)
 GO_ARCHS=(arm64)
 CLANG_ARCHS=(aarch64-linux-android)
-STRIP_ARCHS=(aarch64-linux-android)
 
 MIN_API="$1"
 ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -21,10 +20,7 @@ for i in "${!ABIS[@]}"; do
     && env \
         CGO_ENABLED=1 CC="${TOOLCHAIN}/${CLANG_ARCHS[$i]}${MIN_API}-clang" \
         GOOS=android GOARCH=${GO_ARCHS[$i]} \
-        go build -v -ldflags='-s -w' -o "${OUT_DIR}/unstripped" \
-    && "${TOOLCHAIN}/${STRIP_ARCHS[$i]}-strip" "${OUT_DIR}/unstripped" -o "${OUT_DIR}/${ABI}/${BIN}" \
-    || exit -1
-    rm "${OUT_DIR}/unstripped"
+        go build -v -ldflags='-s -w' -o "${OUT_DIR}/${ABI}/${BIN}"
 done
 
 cd "$ROOT"
