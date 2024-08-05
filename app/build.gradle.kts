@@ -18,7 +18,6 @@ val currentFlavor get() = gradle.startParameter.taskRequests.toString().let { ta
 val minSdk = 29
 
 android {
-    buildToolsVersion("33.0.1")
     val javaVersion = JavaVersion.VERSION_1_8
     compileSdkVersion(33)
     compileOptions {
