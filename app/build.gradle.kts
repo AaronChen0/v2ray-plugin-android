@@ -43,7 +43,8 @@ android {
     splits {
         abi {
             isEnable = true
-            isUniversalApk = true
+            reset()
+            include("arm64-v8a")
         }
     }
     sourceSets.getByName("main") {
@@ -78,7 +79,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 }
 
-val abiCodes = mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86" to 3, "x86_64" to 4)
+val abiCodes = mapOf("arm64-v8a" to 2)
 if (currentFlavor == "release") android.applicationVariants.all {
     for (output in outputs) {
         abiCodes[(output as ApkVariantOutputImpl).getFilter(VariantOutput.ABI)]?.let { offset ->

@@ -2,10 +2,10 @@
 
 [[ -z "${ANDROID_NDK_HOME}" ]] && ANDROID_NDK_HOME="${ANDROID_HOME}/ndk-bundle"
 TOOLCHAIN="$(find ${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/* -maxdepth 1 -type d -print -quit)/bin"
-ABIS=(armeabi-v7a arm64-v8a x86 x86_64)
-GO_ARCHS=('arm GOARM=7' arm64 386 amd64)
-CLANG_ARCHS=(armv7a-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android)
-STRIP_ARCHS=(arm-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android)
+ABIS=(arm64-v8a)
+GO_ARCHS=(arm64)
+CLANG_ARCHS=(aarch64-linux-android)
+STRIP_ARCHS=(aarch64-linux-android)
 
 MIN_API="$1"
 ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
