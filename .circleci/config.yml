@@ -3,13 +3,16 @@ jobs:
   build:
     working_directory: ~/code
     docker:
-      - image: shadowsocks/android-ndk-go
+      - image: cimg/android:2022.12.1-ndk
     environment:
       JVM_OPTS: -Xmx3500m
       GRADLE_OPTS: -Dorg.gradle.workers.max=1 -Dorg.gradle.daemon=false
     steps:
       - checkout
       - run: git submodule update --init --recursive
+      - run: curl -OL https://go.dev/dl/go1.22.5.linux-amd64.tar.gz
+      - run: rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.5.linux-amd64.tar.gz
+      - run: export PATH=$PATH:/usr/local/go/bin
       - restore_cache:
           key: jars-{{ checksum "build.gradle.kts" }}
       - restore_cache:
