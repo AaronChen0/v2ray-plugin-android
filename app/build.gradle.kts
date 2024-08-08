@@ -19,6 +19,7 @@ val targetSdk1 = 34
 android {
     namespace = "com.github.shadowsocks.plugin.v2ray"
     val javaVersion = JavaVersion.VERSION_17
+    ndkVersion = "27.0.11902837"
     compileSdk = targetSdk1
     compileOptions {
         sourceCompatibility = javaVersion
