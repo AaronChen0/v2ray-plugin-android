@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/code
     docker:
-      - image: cimg/android:2022.12.1-ndk
+      - image: cimg/android:2024.07.1-ndk
     environment:
       JVM_OPTS: -Xmx3500m
       GRADLE_OPTS: -Dorg.gradle.workers.max=1 -Dorg.gradle.daemon=false
@@ -19,7 +19,7 @@ jobs:
           key: go-{{ checksum "app/src/main/go/v2ray-plugin/go.sum" }}
       - run:
           name: Run Build
-          command: ./gradlew assembleRelease 
+          command: ./gradlew assembleRelease --warning-mode all
       - save_cache:
           paths:
           - ~/go

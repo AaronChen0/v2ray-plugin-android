@@ -1,5 +1,3 @@
-import com.android.build.gradle.internal.api.ApkVariantOutputImpl
-import com.android.build.VariantOutput
 import org.apache.tools.ant.taskdefs.condition.Os
 import java.util.Locale
 
@@ -10,29 +8,39 @@ plugins {
 
 val flavorRegex = "(assemble|generate)\\w*(Release|Debug)".toRegex()
 val currentFlavor get() = gradle.startParameter.taskRequests.toString().let { task ->
-    flavorRegex.find(task)?.groupValues?.get(2)?.toLowerCase(Locale.ROOT) ?: "debug".also {
-        println("Warning: No match found for $task")
-    }
-}
+                      flavorRegex.find(task)?.groupValues?.get(2)?.lowercase() ?: "debug".also {
+                                                               println("Warning: No match found for $task")
+                                                           }
+                  }
 
-val minSdk = 23
+val minSdk1 = 30
+val targetSdk1 = 34
 
 android {
-    val javaVersion = JavaVersion.VERSION_1_8
-    compileSdkVersion(29)
+    namespace = "com.github.shadowsocks.plugin.v2ray"
+    val javaVersion = JavaVersion.VERSION_17
+    ndkVersion = "27.0.12077973"
+    compileSdk = targetSdk1
     compileOptions {
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
     }
-    kotlinOptions.jvmTarget = javaVersion.toString()
+
+    kotlinOptions {
+        jvmTarget = javaVersion.toString()
+    }
+
     defaultConfig {
         applicationId = "com.github.shadowsocks.plugin.v2ray"
-        minSdkVersion(minSdk)
-        targetSdkVersion(29)
+        minSdk = minSdk1
+        targetSdk = targetSdk1
         versionCode = 1030301
         versionName = "1.3.4"
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
+    
+
+
     buildTypes {
         getByName("release") {
             isShrinkResources = true
@@ -48,8 +56,40 @@ android {
         }
     }
     sourceSets.getByName("main") {
-        jniLibs.setSrcDirs(jniLibs.srcDirs + files("$projectDir/build/go"))
+        jniLibs.srcDirs("$projectDir/build/go")
     }
+
+    
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
+    if (currentFlavor == "release")
+        applicationVariants.all {
+            val variant = this
+            val versionCodes = mapOf("arm64-v8a" to 2)
+
+            variant.outputs
+                .map { it as com.android.build.gradle.internal.api.ApkVariantOutputImpl }
+                .forEach { output ->
+                    val abi = if (output.getFilter("ABI") != null)
+                        output.getFilter("ABI")
+                    else
+                        "universal"
+
+                    if(versionCodes.containsKey(abi))
+                    {
+                        output.versionCodeOverride = (versionCodes[abi]!!).plus(variant.versionCode)
+                    }
+                    else
+                    {
+                        return@forEach
+                    }
+                }
+
+        }
 }
 
 tasks.register<Exec>("goBuild") {
@@ -57,7 +97,7 @@ tasks.register<Exec>("goBuild") {
         println("Warning: Building on Windows is not supported")
     } else {
         executable("/bin/bash")
-        args("go-build.bash", minSdk)
+        args("go-build.bash", minSdk1)
         environment("ANDROID_HOME", android.sdkDirectory)
         environment("ANDROID_NDK_HOME", android.ndkDirectory)
     }
@@ -70,20 +110,10 @@ tasks.whenTaskAdded {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8", rootProject.extra.get("kotlinVersion").toString()))
-    implementation("androidx.preference:preference:1.1.1")
-    implementation("com.github.shadowsocks:plugin:1.3.4")
+    implementation("androidx.preference:preference:1.2.1")
+    implementation("com.github.shadowsocks:plugin:2.0.1")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:1.1.0")
     testImplementation("junit:junit:4.13")
     androidTestImplementation("androidx.test:runner:1.2.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
-}
-
-val abiCodes = mapOf("arm64-v8a" to 2)
-if (currentFlavor == "release") android.applicationVariants.all {
-    for (output in outputs) {
-        abiCodes[(output as ApkVariantOutputImpl).getFilter(VariantOutput.ABI)]?.let { offset ->
-            output.versionCodeOverride = versionCode + offset
-        }
-    }
 }

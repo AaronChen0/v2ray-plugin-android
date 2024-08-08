@@ -26,6 +26,7 @@ import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputType
 import android.view.View
+import android.view.WindowInsets
 import androidx.core.view.updatePadding
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
@@ -72,7 +73,7 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
             options["mode"] ?: "websocket" == "quic" -> "quic-tls"
             "tls" in options -> "websocket-tls"
             else -> "websocket-http"
-        }.also { onPreferenceChange(null, it) }
+        }.also { onModeChange(it) }
         host.text = options["host"] ?: "cloudfront.com"
         path.text = options["path"] ?: "/"
         mux.text = options["mux"] ?: "1"
@@ -94,19 +95,23 @@ class ConfigFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChange
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         listView.setOnApplyWindowInsetsListener { v, insets ->
-            insets.apply { v.updatePadding(bottom = systemWindowInsetBottom) }
+            insets.apply { v.updatePadding(bottom = insets.getInsets(WindowInsets.Type.systemBars()).bottom) }
         }
     }
 
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        val (mode, tls) = readMode(newValue as String)
+    fun onModeChange(newValue: String): Boolean {
+        val (mode, tls) = readMode(newValue)
         path.isEnabled = mode == null
         mux.isEnabled = mode == null
         certRaw.isEnabled = mode != null || tls
         return true
     }
 
-    override fun onDisplayPreferenceDialog(preference: Preference?) {
+    override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+        return onModeChange(newValue as String)
+    }
+
+    override fun onDisplayPreferenceDialog(preference: Preference) {
         if (preference == certRaw) CertificatePreferenceDialogFragment().apply {
             setKey(certRaw.key)
             setTargetFragment(this@ConfigFragment, 0)

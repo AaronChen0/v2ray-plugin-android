@@ -23,6 +23,7 @@ package com.github.shadowsocks.plugin.v2ray
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowInsets
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.updatePadding
@@ -36,11 +37,9 @@ class ConfigActivity : ConfigurationActivity(), Toolbar.OnMenuItemClickListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        findViewById<View>(android.R.id.content).apply {
+        findViewById<View>(R.id.content).apply {
             setOnApplyWindowInsetsListener { view, insets ->
-                view.updatePadding(insets.systemWindowInsetLeft, insets.systemWindowInsetTop,
-                        insets.systemWindowInsetRight)
-                @Suppress("DEPRECATION")
+                view.updatePadding(insets.systemWindowInsetLeft, insets.systemWindowInsetTop, insets.systemWindowInsetRight)
                 insets.replaceSystemWindowInsets(0, 0, 0, insets.systemWindowInsetBottom)
             }
             systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -69,15 +68,16 @@ class ConfigActivity : ConfigurationActivity(), Toolbar.OnMenuItemClickListener 
     }
 
     override fun onBackPressed() {
-        if (child.options != oldOptions) AlertDialog.Builder(this).run {
-            setTitle(R.string.unsaved_changes_prompt)
-            setPositiveButton(R.string.yes) { _, _ ->
-                saveChanges(child.options)
-                finish()
-            }
-            setNegativeButton(R.string.no) { _, _ -> finish() }
-            setNeutralButton(android.R.string.cancel, null)
-            create()
-        }.show() else super.onBackPressed()
+        if (child.options != oldOptions)
+            AlertDialog.Builder(this).run {
+                setTitle(context.getString(R.string.unsaved_changes_prompt))
+                setPositiveButton(R.string.yes) { _, _ ->
+                    saveChanges(child.options)
+                    finish()
+                }
+                setNegativeButton(R.string.no) { _, _ -> finish() }
+                setNeutralButton(android.R.string.cancel, null)
+                create()
+            }.show() else super.onBackPressed()
     }
 }

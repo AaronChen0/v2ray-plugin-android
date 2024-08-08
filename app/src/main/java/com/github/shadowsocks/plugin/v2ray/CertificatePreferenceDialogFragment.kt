@@ -34,17 +34,17 @@ class CertificatePreferenceDialogFragment : EditTextPreferenceDialogFragmentComp
 
     override fun onPrepareDialogBuilder(builder: AlertDialog.Builder) {
         super.onPrepareDialogBuilder(builder)
-        builder.setNeutralButton(R.string.browse) { _, _ ->
+        builder.setNeutralButton(context!!.getString(R.string.browse)) { _, _ ->
             val activity = requireActivity()
             try {
                 targetFragment!!.startActivityForResult(Intent(Intent.ACTION_GET_CONTENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
                     type = "application/pkix-cert"
                 }, ConfigFragment.REQUEST_BROWSE_CERTIFICATE)
-                return@setNeutralButton
             } catch (_: ActivityNotFoundException) { } catch (_: SecurityException) { }
-            Snackbar.make(activity.findViewById(R.id.content), R.string.file_manager_missing, Snackbar.LENGTH_SHORT)
+            Snackbar.make(activity.findViewById(R.id.content), context!!.getString(R.string.file_manager_missing), Snackbar.LENGTH_SHORT)
                     .show()
+            Unit
         }
     }
 }
