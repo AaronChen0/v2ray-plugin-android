@@ -2,6 +2,7 @@
     <string name="browse">Browse</string>
     <string name="file_manager_missing">File manager missing</string>
     <string name="unsaved_changes_prompt">Changes not saved. Do you want to save?</string>
+    <string name="apply">Apply</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <item name="toolbar" type="id"/>

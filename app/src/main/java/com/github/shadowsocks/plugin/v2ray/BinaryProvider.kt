@@ -26,7 +26,6 @@ import com.github.shadowsocks.plugin.NativePluginProvider
 import com.github.shadowsocks.plugin.PathProvider
 import java.io.File
 import java.io.FileNotFoundException
-import java.lang.ArithmeticException
 
 class BinaryProvider : NativePluginProvider() {
     override fun populateFiles(provider: PathProvider) {

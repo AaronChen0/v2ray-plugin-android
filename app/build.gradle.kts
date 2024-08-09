@@ -1,5 +1,4 @@
 import org.apache.tools.ant.taskdefs.condition.Os
-import java.util.Locale
 
 plugins {
     id("com.android.application")
@@ -36,7 +35,6 @@ android {
         targetSdk = targetSdk1
         versionCode = 1030301
         versionName = "1.3.4"
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
     
 
@@ -113,7 +111,4 @@ dependencies {
     implementation("androidx.preference:preference:1.2.1")
     implementation("com.github.shadowsocks:plugin:2.0.1")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:1.1.0")
-    testImplementation("junit:junit:4.13")
-    androidTestImplementation("androidx.test:runner:1.2.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 }
